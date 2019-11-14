@@ -3,38 +3,8 @@ Treehouse Techdegree:
 FSJS project 2 - List Filter and Pagination
 ******************************************/
 
-// Study guide for this project - https://drive.google.com/file/d/1OD1diUsTMdpfMDv677TfL1xO2CEkykSz/view?usp=sharing
-
-
-/***
-   Add your global variables that store the DOM elements you will
-   need to reference and/or manipulate.
-
-   But be mindful of which variables should be global and which
-   should be locally scoped to one of the two main functions you're
-   going to create. A good general rule of thumb is if the variable
-   will only be used inside of a function, then it can be locally
-   scoped to that function.
-***/
-
 const studentsList = document.querySelectorAll(".student-item");
 const itemsPerPage = 10;
-
-
-/***
-   Create the `showPage` function to hide all of the items in the
-   list except for the ten you want to show.
-
-   Pro Tips:
-     - Keep in mind that with a list of 54 students, the last page
-       will only display four.
-     - Remember that the first student has an index of 0.
-     - Remember that a function `parameter` goes in the parens when
-       you initially define the function, and it acts as a variable
-       or a placeholder to represent the actual function `argument`
-       that will be passed into the parens later when you call or
-       "invoke" the function
-***/
 
 function showPage (list, page, itemsPerPage){
   let startIndex = (page*itemsPerPage)-itemsPerPage;
@@ -48,36 +18,52 @@ function showPage (list, page, itemsPerPage){
   }
 }
 
-function createElements(name, property, value, parent){
-  const parentNode = document.querySelector(parent);
+function createElements(name, properties, parentNode){
   const element = document.createElement(name);
-  element[property]=value;
+  if (Array.isArray(properties[0])){
+    for (let i=0; i<properties.length; i++){
+      element[properties[i][0]]=[properties[i][1]];
+    }
+  }
+  else {
+    element[properties[0]]=[properties[1]];
+    }
   parentNode.appendChild(element);
+  return element;
 }
 
 function appendPageLinks (list, itemsPerPage){
-  createElements("div", "className", "pagination","div.page");
-  createElements("ul", null, null,".pagination");
+  const divPage = document.querySelector(".page");
+  const divPageLinks = createElements("div", ["className", "pagination"], divPage);
+  const ulPageLinks = createElements("ul", [], divPageLinks);
   const noOfLinks= Math.ceil(list.length/itemsPerPage);
-  for (i=1; i<=noOfLinks; i++){
-    const liParent = document.querySelector(".pagination").firstChild;
-    const aParent =  document.querySelector(liParent).firstChild;
-    createElements("li", "textContent", i, parentNode);
-    createElements("a", "href", "#", parentNode);
-
+  for (let i=1; i<=noOfLinks; i++){
+    const liPageLinks= createElements("li", [], ulPageLinks);
+    const anchors = createElements("a", [["href", "#"], ["textContent", i]], liPageLinks);
+      if (i===1){
+        anchors.className="active";
+      }
+      // Daaaan, schreib das um, das ist falsch!
+      anchors.addEventListener("click", (e) => {
+        if (anchors.className !== "active"){
+          const allAnchors = ulPageLinks.querySelectorAll("a")
+            for (let j=0; j<=allAnchors.length; j++){
+              allAnchors[j].className=" ";
+            }
+          anchors.className = "active";
+          showPage(studentsList, anchors.textContent, itemsPerPage);
+        }
+      });
   }
 }
 
-function createList(list, itemsPerPage){
-  showPage(list, 1, itemsPerPage);
+function createList (list, itemsPerPage){
   appendPageLinks(list, itemsPerPage);
+  showPage(list, 1, itemsPerPage);
 }
 
 createList(studentsList, itemsPerPage);
-/***
-   Create the `appendPageLinks function` to generate, append, and add
-   functionality to the pagination buttons.
-***/
+
 
 
 
