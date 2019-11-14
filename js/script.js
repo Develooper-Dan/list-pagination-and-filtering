@@ -36,19 +36,44 @@ const itemsPerPage = 10;
        "invoke" the function
 ***/
 
-function showPage (students, page){
+function showPage (list, page, itemsPerPage){
   let startIndex = (page*itemsPerPage)-itemsPerPage;
   let endIndex = (page*itemsPerPage)-1;
-  for (let i=0; i<=(students.length-1); i++){
+  for (let i=0; i<=(list.length-1); i++){
       if (i>=startIndex && i<=endIndex){
-        students[i].style.display ="";
+        list[i].style.display ="";
       } else {
-        students[i].style.display = "none";
+        list[i].style.display = "none";
       }
   }
 }
 
+function createElements(name, property, value, parent){
+  const parentNode = document.querySelector(parent);
+  const element = document.createElement(name);
+  element[property]=value;
+  parentNode.appendChild(element);
+}
 
+function appendPageLinks (list, itemsPerPage){
+  createElements("div", "className", "pagination","div.page");
+  createElements("ul", null, null,".pagination");
+  const noOfLinks= Math.ceil(list.length/itemsPerPage);
+  for (i=1; i<=noOfLinks; i++){
+    const liParent = document.querySelector(".pagination").firstChild;
+    const aParent =  document.querySelector(liParent).firstChild;
+    createElements("li", "textContent", i, parentNode);
+    createElements("a", "href", "#", parentNode);
+
+  }
+}
+
+function createList(list, itemsPerPage){
+  showPage(list, 1, itemsPerPage);
+  appendPageLinks(list, itemsPerPage);
+}
+
+createList(studentsList, itemsPerPage);
 /***
    Create the `appendPageLinks function` to generate, append, and add
    functionality to the pagination buttons.
