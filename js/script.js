@@ -7,14 +7,25 @@ const studentsList = document.querySelectorAll(".student-item");
 const itemsPerPage = 10;
 
 function showPage (list, page, itemsPerPage){
+  if (list.length==0){
+    noResult();
+    return
+  }
   let startIndex = (page*itemsPerPage)-itemsPerPage;
   let endIndex = (page*itemsPerPage)-1;
-  for (let i=0; i<=(list.length-1); i++){
+  for (let i=0; i<list.length; i++){
       if (i>=startIndex && i<=endIndex){
         list[i].style.display ="";
       } else {
         list[i].style.display = "none";
       }
+  }
+}
+
+function noResult (){
+  const list = document.querySelector(".student-list");
+  if (list.lastChild.className!=="no-result"){
+    const listEmpty = createElements("h2", [["className", "no-result"], ["textContent", "No results"]], list);
   }
 }
 
@@ -43,30 +54,52 @@ function appendPageLinks (list, itemsPerPage){
       if (i===1){
         anchors.className="active";
       }
-      // Daaaan, schreib das um, das ist falsch!
-      anchors.addEventListener("click", (e) => {
+
+      anchors.addEventListener("click", () => {
         if (anchors.className !== "active"){
-          const allAnchors = ulPageLinks.querySelectorAll("a")
-            for (let j=0; j<=allAnchors.length; j++){
+          const allAnchors = ulPageLinks.querySelectorAll("a");
+            for (let j=0; j<allAnchors.length; j++){
               allAnchors[j].className=" ";
             }
           anchors.className = "active";
-          showPage(studentsList, anchors.textContent, itemsPerPage);
+          showPage(list, anchors.textContent, itemsPerPage);
         }
-      });
+      })
   }
 }
 
-function createList (list, itemsPerPage){
-  appendPageLinks(list, itemsPerPage);
-  showPage(list, 1, itemsPerPage);
+function replacePageLinks(list, itemsPerPage){
+  const divPage = document.querySelector(".page");
+  divPage.removeChild(divPage.lastChild);
+  appendPageLinks (list, itemsPerPage);
 }
 
-createList(studentsList, itemsPerPage);
+function appendSearchBar(){
+  const listHeader = document.querySelector(".page-header");
+  const divSearchBar = createElements("div", ["className", "student-search"], listHeader);
+  const input = createElements("input", [["type", "text"], ["placeholder", "Search for students"]], divSearchBar);
+  const button = createElements("button", ["textContent", "Search"], divSearchBar );
 
+  button.addEventListener("click", () =>{
+    if (input.value){
+      const searchText = input.value.toLowerCase();
+      const studentNames = document.querySelectorAll(".student-details>h3");
+      const hits = [];
+        for (let i=0; i<studentsList.length; i++){
+          const name = studentNames[i].textContent.toLowerCase();
+            if (name.includes(searchText)){
+              studentsList[i].style.display ="";
+              hits.push(studentsList[i]);
+            } else {
+              studentsList[i].style.display ="none";
+            }
+        }
+        replacePageLinks(hits, itemsPerPage);
+        showPage(hits, 1, itemsPerPage);
+      }
+    })
+}
 
-
-
-
-
-// Remember to delete the comments that came with this file, and replace them with your own code comments.
+appendSearchBar();
+appendPageLinks(studentsList, itemsPerPage);
+showPage(studentsList, 1, itemsPerPage);
