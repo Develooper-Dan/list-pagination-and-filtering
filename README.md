@@ -1,5 +1,5 @@
 # Treehouse Techdegree:
-# FSJS project 2 - List Filter and Pagination
+# FSJS project 2 - List filtering and Pagination
 
 The aim of this project was to use unobtrusive JavaScript on given fictive students lists
 of varying length to add means of pagination and filtering to a HTML-Document without changing the actual
